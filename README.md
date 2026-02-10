@@ -41,6 +41,18 @@ LangGraph makes multi‑agent systems feel surprisingly natural. Each agent is j
 <img width="8192" height="886" alt="11-v1" src="https://github.com/user-attachments/assets/de69dacb-58bc-4deb-adff-5528a172b01a" />
 
 ---
+## KV Caching
+### KV caching is basically the model’s way of not repeating work it has already done.
+#### When an LLM reads a long prompt, it has to process every token and build internal representations (Keys and Values) that help it understand how each word relates to the others. Normally, without caching, the model would recompute all of that from scratch every time it generates a new token.
+KV caching fixes that.
+#### A simple way to say it:
+- KV caching lets the model “remember” the heavy computations it already did, so when it generates the next word, it only processes the new part instead of reprocessing the entire conversation.
+
+This makes generation:
+- much faster
+- much cheaper
+- much more scalable, especially for long contexts or multi‑agent loops
+It’s like writing a book and not having to reread all previous chapters every time you write a new sentence — you just look at your notes instead.
 
 
 
