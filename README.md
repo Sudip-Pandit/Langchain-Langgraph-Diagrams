@@ -23,5 +23,13 @@ In short:
 LangChain is perfect for quick experiments. LangGraph is built for real systems.
 If you’re moving from prototypes to production, this shift — from linear chains to stateful graphs — makes a huge difference in reliability, debugging, and overall system behavior.
 
-
 <img width="3400" height="5560" alt="LangchainVsLanggraph" src="https://github.com/user-attachments/assets/6d5535f8-fd83-42a3-9863-7ff16ddc1611" />
+
+---
+## Langgraph Execution Model
+LangGraph runs like a state machine.
+You start with a TypedDict state, and each node updates that state as the workflow progresses. Instead of letting the LLM decide what happens next, LangGraph uses explicit edges — which makes the whole system predictable and easy to debug.
+Because edges can be conditional or cyclic, you can build loops, retries, planning cycles, and multi‑agent workflows. The executor handles merging state updates, streaming, async execution, and checkpoints.
+In short: LangGraph gives you full control over how an AI system moves from step to step — which is exactly what you need for production‑grade agentic workflows.
+
+<img width="2353" height="6634" alt="Langgraph Execution Model" src="https://github.com/user-attachments/assets/8bba279e-e69c-4ff9-b110-90ba23a67d9e" />
