@@ -16,5 +16,18 @@ As generative AI keeps evolving, I think the teams that win are the ones who sto
 ---
 
 ## Langchain Vs Langgraph
+A lot of people ask how LangGraph is different from LangChain, so I put together a simple visual to break it down.
+- LangChain is great when you need to build something quickly — it’s linear, lightweight, and easy to prototype with. But it’s also mostly stateless and relies heavily on the LLM to decide what happens next.
+- LangGraph takes a different approach. It treats your workflow like a graph, not a chain. Each node updates a shared state, you can add loops and cycles, and routing is explicit instead of LLM‑driven. That means you get more control, more predictability, and a structure that actually scales when you’re building multi‑agent or production‑grade systems.
+In short:
+LangChain is perfect for quick experiments. LangGraph is built for real systems.
+If you’re moving from prototypes to production, this shift — from linear chains to stateful graphs — makes a huge difference in reliability, debugging, and overall system behavior.
+
+If you want, I can also write:
+- a shorter punchy version
+- a more technical senior‑engineer version
+- or a storytelling version that frames your learning journey
+Just tell me the vibe you want next.
+
 
 <img width="3400" height="5560" alt="LangchainVsLanggraph" src="https://github.com/user-attachments/assets/6d5535f8-fd83-42a3-9863-7ff16ddc1611" />
