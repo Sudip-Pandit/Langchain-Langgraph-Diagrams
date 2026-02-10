@@ -38,6 +38,9 @@ In short: LangGraph gives you full control over how an AI system moves from step
 ## Langgraph supports Multi-Agent
 LangGraph makes multi‑agent systems feel surprisingly natural. Each agent is just a node that reads and writes to a shared state, so planners, executors, evaluators, and moderators can all collaborate without hacks or hidden message passing. Conditional edges let agents hand off control, cycles enable negotiation or refinement loops, and moderator nodes enforce safety. Because everything is explicit and observable, you get a clean view of how agents interact — which is exactly what you need when building reliable, production‑grade AI systems.
 
-<img width="8191" height="963" alt="Langgraph-multi-agents-support" src="https://github.com/user-attachments/assets/2cfa8c19-c9a9-4d49-a63f-f9ccea5b5cf7" />
+<img width="8192" height="886" alt="11-v1" src="https://github.com/user-attachments/assets/de69dacb-58bc-4deb-adff-5528a172b01a" />
+
+---
+
 
 
