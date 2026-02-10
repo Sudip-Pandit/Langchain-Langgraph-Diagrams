@@ -52,7 +52,10 @@ This makes generation:
 - much faster
 - much cheaper
 - much more scalable, especially for long contexts or multi‑agent loops
-It’s like writing a book and not having to reread all previous chapters every time you write a new sentence — you just look at your notes instead.
+##### It’s like writing a book and not having to reread all previous chapters every time you write a new sentence — you just look at your notes instead.
+
+<img width="7217" height="5665" alt="kv-caching" src="https://github.com/user-attachments/assets/98b08faa-0264-4f92-ab3b-f90a5c00a86f" />
+
 
 
 
