@@ -23,11 +23,5 @@ In short:
 LangChain is perfect for quick experiments. LangGraph is built for real systems.
 If you’re moving from prototypes to production, this shift — from linear chains to stateful graphs — makes a huge difference in reliability, debugging, and overall system behavior.
 
-If you want, I can also write:
-- a shorter punchy version
-- a more technical senior‑engineer version
-- or a storytelling version that frames your learning journey
-Just tell me the vibe you want next.
-
 
 <img width="3400" height="5560" alt="LangchainVsLanggraph" src="https://github.com/user-attachments/assets/6d5535f8-fd83-42a3-9863-7ff16ddc1611" />
