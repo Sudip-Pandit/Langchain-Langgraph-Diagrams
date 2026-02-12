@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangGraph - Complete Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            overflow-x: auto;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 140px;
+            padding: 18px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #667eea;
+            color: #667eea;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #764ba2;
+        }
+
+        .code-container {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .code-title {
+            color: #a78bfa;
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-left: 5px solid #3b82f6;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .success-box {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border-left: 5px solid #10b981;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid #f59e0b;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .error-box {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border-left: 5px solid #ef4444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .box-title {
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .comparison-table tr:hover {
+            background: #e9ecef;
+        }
+
+        .visual-example {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 2px solid #e9ecef;
+        }
+
+        .graph-viz {
+            background: white;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+
+        .node {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            padding: 10px 15px;
+            display: inline-block;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .edge {
+            color: #667eea;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .feature-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #4c1d95;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .feature-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 LangGraph</h1>
+            <p>Build Stateful, Multi-Agent AI Applications</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('intro')">📘 Introduction</div>
+            <div class="tab" onclick="showSection('concepts')">🧠 Core Concepts</div>
+            <div class="tab" onclick="showSection('basics')">🚀 Getting Started</div>
+            <div class="tab" onclick="showSection('patterns')">📐 Patterns</div>
+            <div class="tab" onclick="showSection('agents')">🤖 Agents</div>
+            <div class="tab" onclick="showSection('advanced')">⚡ Advanced</div>
+            <div class="tab" onclick="showSection('examples')">💡 Examples</div>
+            <div class="tab" onclick="showSection('production')">🏭 Production</div>
+        </div>
+
+        <div class="content">
+            <!-- Introduction Section -->
+            <div id="intro" class="section active">
+                <div class="section-title">📘 What is LangGraph?</div>
+
+                <div class="info-box">
+                    <div class="box-title">Definition</div>
+                    <p style="line-height: 1.8;">
+                        <strong>LangGraph</strong> is a framework for building <strong>stateful, multi-step applications</strong> with LLMs.<br><br>
+                        It extends LangChain with the ability to create <strong>cyclic graphs</strong> (workflows that can loop, branch, and maintain state).
+                    </p>
+                </div>
+
+                <div class="section-title" style="margin-top: 40px;">Why LangGraph?</div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-title">❌ LangChain Limitations</div>
+                        <p style="line-height: 1.8;">
+                            LangChain chains are <strong>linear</strong>:<br><br>
+                            Input → Step 1 → Step 2 → Step 3 → Output<br><br>
+                            ❌ Can't loop<br>
+                            ❌ Can't branch conditionally<br>
+                            ❌ Can't persist state<br>
+                            ❌ Hard to build agents
+                        </p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">✅ LangGraph Solutions</div>
+                        <p style="line-height: 1.8;">
+                            LangGraph enables <strong>graphs</strong>:<br><br>
+                            ✅ Cycles (loops)<br>
+                            ✅ Conditional branching<br>
+                            ✅ Persistent state<br>
+                            ✅ Human-in-the-loop<br>
+                            ✅ Multi-agent systems<br>
+                            ✅ Complex workflows
+                        </p>
+                    </div>
+                </div>
+
+                <div class="visual-example">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">LangChain vs LangGraph</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h4 style="color: #ef4444; margin-bottom: 10px;">LangChain (Linear)</h4>
+                            <div class="graph-viz">
+                                <pre>
+Input
+  ↓
+[LLM]
+  ↓
+[Parser]
+  ↓
+Output
+                                </pre>
+                            </div>
+                            <p style="color: #ef4444; margin-top: 10px;">One-way flow only!</p>
+                        </div>
+                        <div>
+                            <h4 style="color: #10b981; margin-bottom: 10px;">LangGraph (Graph)</h4>
+                            <div class="graph-viz">
+                                <pre>
+     Input
+       ↓
+    [Agent]  ←─────┐
+       ↓           │
+    Decide?        │
+     ↙  ↘         │
+[Tool] [End]      │
+   ↓              │
+Loop back ────────┘
+                                </pre>
+                            </div>
+                            <p style="color: #10b981; margin-top: 10px;">Loops, branches, state!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <div class="box-title">🎯 Perfect For</div>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>✅ <strong>Agents:</strong> ReAct, tool-calling, autonomous agents</li>
+                        <li>✅ <strong>Multi-agent systems:</strong> Multiple LLMs working together</li>
+                        <li>✅ <strong>Complex workflows:</strong> Research, planning, code generation</li>
+                        <li>✅ <strong>Human-in-the-loop:</strong> Approval steps, corrections</li>
+                        <li>✅ <strong>Chatbots:</strong> Stateful conversations with memory</li>
+                        <li>✅ <strong>RAG with routing:</strong> Dynamic retrieval strategies</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <div class="box-title">When NOT to Use LangGraph</div>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>❌ Simple linear chains (use LangChain)</li>
+                        <li>❌ One-shot prompts (use OpenAI API directly)</li>
+                        <li>❌ No state needed (use simple functions)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Core Concepts Section -->
+            <div id="concepts" class="section">
+                <div class="section-title">🧠 Core Concepts</div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-title">1. State</div>
+                        <p style="line-height: 1.8;">
+                            The <strong>shared data</strong> that flows through the graph.<br><br>
+                            Defined as a TypedDict or Pydantic model.
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">State Example</div>
+                            <pre>from typing import TypedDict
+
+class AgentState(TypedDict):
+    messages: list[str]
+    next_action: str
+    tool_results: dict
+    iteration: int</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">2. Nodes</div>
+                        <p style="line-height: 1.8;">
+                            <strong>Functions</strong> that process the state.<br><br>
+                            Each node takes state as input and returns updated state.
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Node Example</div>
+                            <pre>def agent_node(state: AgentState):
+    """Process with LLM"""
+    response = llm.invoke(state["messages"])
+    return {
+        "messages": state["messages"] + [response],
+        "iteration": state["iteration"] + 1
+    }</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">3. Edges</div>
+                        <p style="line-height: 1.8;">
+                            <strong>Connections</strong> between nodes.<br><br>
+                            Can be normal or conditional.
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Edge Types</div>
+                            <pre># Normal edge (always follows)
+graph.add_edge("nodeA", "nodeB")
+
+# Conditional edge (routing)
+graph.add_conditional_edges(
+    "agent",
+    should_continue,  # Function
+    {
+        "continue": "tools",
+        "end": END
+    }
+)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">4. Graph</div>
+                        <p style="line-height: 1.8;">
+                            The <strong>workflow</strong> connecting all nodes and edges.
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Graph Example</div>
+                            <pre>from langgraph.graph import StateGraph
+
+graph = StateGraph(AgentState)
+
+# Add nodes
+graph.add_node("agent", agent_node)
+graph.add_node("tools", tool_node)
+
+# Add edges
+graph.add_edge("agent", "tools")
+graph.add_edge("tools", "agent")
+
+# Set entry point
+graph.set_entry_point("agent")</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">5. Checkpoints</div>
+                        <p style="line-height: 1.8;">
+                            <strong>State snapshots</strong> saved at each step.<br><br>
+                            Enables time-travel, resumption, and human-in-the-loop.
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Checkpoint Example</div>
+                            <pre>from langgraph.checkpoint import MemorySaver
+
+# Enable checkpointing
+memory = MemorySaver()
+app = graph.compile(checkpointer=memory)
+
+# Resume from checkpoint
+app.invoke(
+    input,
+    config={"configurable": {"thread_id": "1"}}
+)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">6. Reducers</div>
+                        <p style="line-height: 1.8;">
+                            Control <strong>how state is updated</strong> when multiple nodes modify the same field.
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Reducer Example</div>
+                            <pre>from typing import Annotated
+from operator import add
+
+class State(TypedDict):
+    # Append to list
+    messages: Annotated[list, add]
+    
+    # Replace value (default)
+    counter: int</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Getting Started Section -->
+            <div id="basics" class="section">
+                <div class="section-title">🚀 Getting Started</div>
+
+                <div class="code-container">
+                    <div class="code-title">1. Installation</div>
+                    <pre>pip install langgraph langchain langchain-openai</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-title">2. Simple Graph (Hello World)</div>
+                    <pre>from typing import TypedDict
+from langgraph.graph import StateGraph, END
+
+# Define state
+class State(TypedDict):
+    message: str
+    count: int
+
+# Define nodes
+def step1(state: State):
+    return {"message": state["message"] + " World", "count": 1}
+
+def step2(state: State):
+    return {"message": state["message"] + "!", "count": state["count"] + 1}
+
+# Build graph
+graph = StateGraph(State)
+graph.add_node("step1", step1)
+graph.add_node("step2", step2)
+
+# Connect nodes
+graph.set_entry_point("step1")
+graph.add_edge("step1", "step2")
+graph.add_edge("step2", END)
+
+# Compile
+app = graph.compile()
+
+# Run
+result = app.invoke({"message": "Hello", "count": 0})
+print(result)
+# {'message': 'Hello World!', 'count': 2}</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-title">3. Conditional Routing</div>
+                    <pre>from langgraph.graph import StateGraph, END
+
+class State(TypedDict):
+    number: int
+    result: str
+
+def check_number(state: State):
+    """Determine next step based on state"""
+    if state["number"] > 10:
+        return "large"
+    else:
+        return "small"
+
+def handle_large(state: State):
+    return {"result": f"{state['number']} is large"}
+
+def handle_small(state: State):
+    return {"result": f"{state['number']} is small"}
+
+# Build graph
+graph = StateGraph(State)
+graph.add_node("large", handle_large)
+graph.add_node("small", handle_small)
+
+# Set entry point with conditional routing
+graph.set_conditional_entry_point(
+    check_number,
+    {
+        "large": "large",
+        "small": "small"
+    }
+)
+
+graph.add_edge("large", END)
+graph.add_edge("small", END)
+
+app = graph.compile()
+
+# Test
+print(app.invoke({"number": 15}))
+# {'number': 15, 'result': '15 is large'}
+
+print(app.invoke({"number": 5}))
+# {'number': 5, 'result': '5 is small'}</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-title">4. Loops (Agent Pattern)</div>
+                    <pre>from langchain_openai import ChatOpenAI
+
+class AgentState(TypedDict):
+    messages: list
+    iterations: int
+
+llm = ChatOpenAI(temperature=0)
+
+def agent_node(state: AgentState):
+    """Agent decides: continue or stop"""
+    response = llm.invoke(state["messages"])
+    return {
+        "messages": state["messages"] + [response],
+        "iterations": state["iterations"] + 1
+    }
+
+def should_continue(state: AgentState):
+    """Routing function"""
+    last_message = state["messages"][-1]
+    
+    # Stop if max iterations or FINAL ANSWER
+    if state["iterations"] >= 5:
+        return "end"
+    if "FINAL ANSWER" in last_message.content:
+        return "end"
+    
+    return "continue"
+
+# Build graph with loop
+graph = StateGraph(AgentState)
+graph.add_node("agent", agent_node)
+
+graph.set_entry_point("agent")
+
+graph.add_conditional_edges(
+    "agent",
+    should_continue,
+    {
+        "continue": "agent",  # Loop back!
+        "end": END
+    }
+)
+
+app = graph.compile()
+
+# Run
+result = app.invoke({
+    "messages": [("user", "What is 2+2?")],
+    "iterations": 0
+})
+
+print(result["messages"][-1].content)</pre>
+                </div>
+            </div>
+
+            <!-- Patterns Section -->
+            <div id="patterns" class="section">
+                <div class="section-title">📐 Common Patterns</div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-title">1. ReAct Agent</div>
+                        <p style="line-height: 1.8;">
+                            Reason → Act → Observe loop
+                        </p>
+                        <div class="graph-viz">
+                            <pre>
+    START
+      ↓
+   [Agent] ← Reason about next action
+      ↓
+   Decide?
+    ↙  ↘
+[Tools] [End]
+    ↓
+  Loop back to Agent (Observe)
+                            </pre>
+                        </div>
+                        <div class="code-container">
+                            <div class="code-title">ReAct Pattern</div>
+                            <pre>def agent_node(state):
+    # LLM decides: use tool or finish
+    response = llm_with_tools.invoke(state["messages"])
+    return {"messages": [...]}
+
+def tool_node(state):
+    # Execute tools
+    results = execute_tools(state["messages"][-1])
+    return {"messages": [...]}
+
+def should_continue(state):
+    last = state["messages"][-1]
+    if hasattr(last, "tool_calls"):
+        return "tools"
+    return "end"
+
+graph.add_conditional_edges(
+    "agent", should_continue,
+    {"tools": "tools", "end": END}
+)
+graph.add_edge("tools", "agent")</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">2. Human-in-the-Loop</div>
+                        <p style="line-height: 1.8;">
+                            Pause for human approval before proceeding
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Human Approval</div>
+                            <pre>from langgraph.checkpoint import MemorySaver
+
+graph = StateGraph(State)
+graph.add_node("draft", create_draft)
+graph.add_node("review", human_review)  # Pause here
+graph.add_node("publish", publish_content)
+
+graph.add_edge("draft", "review")
+graph.add_edge("review", "publish")
+
+# Enable checkpointing
+memory = MemorySaver()
+app = graph.compile(
+    checkpointer=memory,
+    interrupt_before=["review"]  # Pause!
+)
+
+# Run until interrupt
+config = {"configurable": {"thread_id": "1"}}
+app.invoke(input, config)
+
+# Human reviews, then resume
+app.invoke(None, config)  # Continues</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">3. Map-Reduce</div>
+                        <p style="line-height: 1.8;">
+                            Process items in parallel, then aggregate
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Map-Reduce Pattern</div>
+                            <pre>from langgraph.graph import StateGraph
+
+def map_node(state):
+    # Process each item
+    results = []
+    for item in state["items"]:
+        result = process(item)
+        results.append(result)
+    return {"results": results}
+
+def reduce_node(state):
+    # Aggregate results
+    summary = aggregate(state["results"])
+    return {"summary": summary}
+
+graph = StateGraph(State)
+graph.add_node("map", map_node)
+graph.add_node("reduce", reduce_node)
+graph.add_edge("map", "reduce")</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">4. Plan-and-Execute</div>
+                        <p style="line-height: 1.8;">
+                            Create plan, execute steps, verify
+                        </p>
+                        <div class="graph-viz">
+                            <pre>
+  [Planner]
+      ↓
+  [Execute Step 1]
+      ↓
+  [Execute Step 2]
+      ↓
+  [Verify]
+    ↙  ↘
+[Done] [Replan]
+         ↓
+    Loop to Planner
+                            </pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">5. Multi-Agent Collaboration</div>
+                        <p style="line-height: 1.8;">
+                            Multiple agents working together
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Multi-Agent</div>
+                            <pre>def router(state):
+    # Decide which agent to use
+    if "code" in state["task"]:
+        return "coder"
+    elif "research" in state["task"]:
+        return "researcher"
+    return "writer"
+
+graph.add_node("coder", coder_agent)
+graph.add_node("researcher", researcher_agent)
+graph.add_node("writer", writer_agent)
+
+graph.set_conditional_entry_point(
+    router,
+    {
+        "coder": "coder",
+        "researcher": "researcher",
+        "writer": "writer"
+    }
+)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">6. Reflection</div>
+                        <p style="line-height: 1.8;">
+                            Generate → Critique → Improve loop
+                        </p>
+                        <div class="graph-viz">
+                            <pre>
+   [Generate]
+       ↓
+   [Critique]
+       ↓
+   Good enough?
+     ↙  ↘
+  [End] [Improve]
+           ↓
+      Loop to Generate
+                            </pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agents Section -->
+            <div id="agents" class="section">
+                <div class="section-title">🤖 Building Agents</div>
+
+                <div class="code-container">
+                    <div class="code-title">Complete ReAct Agent Example</div>
+                    <pre>from typing import Annotated, TypedDict
+from langchain_openai import ChatOpenAI
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
+from langchain_core.tools import tool
+from langgraph.graph import StateGraph, END
+from langgraph.prebuilt import ToolNode
+from operator import add
+
+# Define tools
+@tool
+def get_weather(location: str):
+    """Get weather for a location"""
+    return f"Weather in {location}: Sunny, 72°F"
+
+@tool
+def calculate(expression: str):
+    """Calculate a math expression"""
+    return str(eval(expression))
+
+tools = [get_weather, calculate]
+
+# Define state
+class AgentState(TypedDict):
+    messages: Annotated[list, add]
+
+# Create LLM with tools
+llm = ChatOpenAI(temperature=0)
+llm_with_tools = llm.bind_tools(tools)
+
+# Agent node
+def agent(state: AgentState):
+    """Agent decides what to do next"""
+    messages = state["messages"]
+    response = llm_with_tools.invoke(messages)
+    return {"messages": [response]}
+
+# Routing function
+def should_continue(state: AgentState):
+    """Decide: use tools or finish?"""
+    last_message = state["messages"][-1]
+    
+    # If LLM made tool calls, execute them
+    if hasattr(last_message, "tool_calls") and last_message.tool_calls:
+        return "tools"
+    
+    # Otherwise, finish
+    return "end"
+
+# Build graph
+graph = StateGraph(AgentState)
+
+# Add nodes
+graph.add_node("agent", agent)
+graph.add_node("tools", ToolNode(tools))
+
+# Set entry point
+graph.set_entry_point("agent")
+
+# Add conditional edges
+graph.add_conditional_edges(
+    "agent",
+    should_continue,
+    {
+        "tools": "tools",
+        "end": END
+    }
+)
+
+# Add edge from tools back to agent
+graph.add_edge("tools", "agent")
+
+# Compile
+app = graph.compile()
+
+# Run!
+inputs = {"messages": [HumanMessage(content="What's the weather in SF? Then calculate 25 * 4")]}
+
+for output in app.stream(inputs):
+    for key, value in output.items():
+        print(f"--- {key} ---")
+        print(value)
+        print("\n")
+
+# Final result
+final_state = app.invoke(inputs)
+print("Final Answer:", final_state["messages"][-1].content)</pre>
+                </div>
+
+                <div class="success-box">
+                    <div class="box-title">✅ Agent Best Practices</div>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>✅ <strong>Add max iterations:</strong> Prevent infinite loops</li>
+                        <li>✅ <strong>Use structured outputs:</strong> Pydantic models for tool inputs</li>
+                        <li>✅ <strong>Log everything:</strong> Track agent decisions</li>
+                        <li>✅ <strong>Handle errors:</strong> Graceful failure in tools</li>
+                        <li>✅ <strong>Set timeouts:</strong> Don't let agents run forever</li>
+                        <li>✅ <strong>Use checkpoints:</strong> Enable recovery and debugging</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Advanced Section -->
+            <div id="advanced" class="section">
+                <div class="section-title">⚡ Advanced Features</div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-title">1. Streaming</div>
+                        <p style="line-height: 1.8;">
+                            Stream outputs as graph executes
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Streaming</div>
+                            <pre># Stream updates
+for chunk in app.stream(inputs):
+    print(chunk)
+
+# Stream with values
+for chunk in app.stream(inputs, stream_mode="values"):
+    print(chunk)
+
+# Stream updates and values
+for chunk in app.stream(
+    inputs,
+    stream_mode=["updates", "values"]
+):
+    print(chunk)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">2. Subgraphs</div>
+                        <p style="line-height: 1.8;">
+                            Nest graphs within graphs
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Subgraph</div>
+                            <pre># Create subgraph
+subgraph = StateGraph(SubState)
+subgraph.add_node("step1", step1)
+subgraph.add_node("step2", step2)
+sub_app = subgraph.compile()
+
+# Use in main graph
+def use_subgraph(state):
+    result = sub_app.invoke(state["data"])
+    return {"result": result}
+
+main_graph.add_node("sub", use_subgraph)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">3. Persistence</div>
+                        <p style="line-height: 1.8;">
+                            Save state to database
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">SQLite Persistence</div>
+                            <pre>from langgraph.checkpoint.sqlite import SqliteSaver
+
+# Create checkpointer
+with SqliteSaver.from_conn_string("checkpoints.db") as memory:
+    app = graph.compile(checkpointer=memory)
+    
+    # Run with thread_id
+    config = {"configurable": {"thread_id": "user123"}}
+    app.invoke(input, config)
+    
+    # Resume later
+    app.invoke(more_input, config)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">4. Time Travel</div>
+                        <p style="line-height: 1.8;">
+                            Go back to any checkpoint
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Time Travel</div>
+                            <pre># Get state history
+history = app.get_state_history(config)
+
+for state in history:
+    print(state.values)
+    print(state.next)
+    print("---")
+
+# Get specific checkpoint
+checkpoint = list(history)[2]  # 3rd checkpoint
+
+# Resume from that checkpoint
+app.invoke(
+    None,
+    config={
+        "configurable": {
+            "thread_id": "user123",
+            "checkpoint_id": checkpoint.config["configurable"]["checkpoint_id"]
+        }
+    }
+)</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">5. Parallel Execution</div>
+                        <p style="line-height: 1.8;">
+                            Run multiple nodes simultaneously
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Parallel Nodes</div>
+                            <pre># These run in parallel
+graph.add_edge("start", "task1")
+graph.add_edge("start", "task2")
+graph.add_edge("start", "task3")
+
+# All must complete before continuing
+graph.add_edge("task1", "combine")
+graph.add_edge("task2", "combine")
+graph.add_edge("task3", "combine")</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">6. Dynamic Graphs</div>
+                        <p style="line-height: 1.8;">
+                            Modify graph structure at runtime
+                        </p>
+                        <div class="code-container">
+                            <div class="code-title">Dynamic Routing</div>
+                            <pre>def dynamic_router(state):
+    # Determine next nodes at runtime
+    if state["complex"]:
+        return ["analyze", "validate", "review"]
+    else:
+        return ["simple_process"]
+
+graph.add_conditional_edges(
+    "start",
+    dynamic_router
+)</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Examples Section -->
+            <div id="examples" class="section">
+                <div class="section-title">💡 Complete Examples</div>
+
+                <div class="code-container">
+                    <div class="code-title">Example 1: Research Assistant</div>
+                    <pre>from typing import Annotated, TypedDict
+from langchain_openai import ChatOpenAI
+from langchain_core.tools import tool
+from langgraph.graph import StateGraph, END
+from langgraph.prebuilt import ToolNode
+from operator import add
+
+# Tools
+@tool
+def web_search(query: str):
+    """Search the web"""
+    return f"Results for '{query}': [Article 1, Article 2, Article 3]"
+
+@tool
+def read_article(url: str):
+    """Read an article"""
+    return f"Content of {url}: This is a detailed article..."
+
+tools = [web_search, read_article]
+
+# State
+class ResearchState(TypedDict):
+    messages: Annotated[list, add]
+    research_topic: str
+    findings: list[str]
+    iterations: int
+
+# Nodes
+llm = ChatOpenAI(temperature=0).bind_tools(tools)
+
+def researcher(state: ResearchState):
+    """Research agent"""
+    response = llm.invoke([
+        {"role": "system", "content": f"Research: {state['research_topic']}"},
+        *state["messages"]
+    ])
+    return {
+        "messages": [response],
+        "iterations": state["iterations"] + 1
+    }
+
+def should_continue(state: ResearchState):
+    if state["iterations"] >= 5:
+        return "end"
+    
+    last = state["messages"][-1]
+    if hasattr(last, "tool_calls") and last.tool_calls:
+        return "tools"
+    
+    return "end"
+
+# Build graph
+graph = StateGraph(ResearchState)
+graph.add_node("researcher", researcher)
+graph.add_node("tools", ToolNode(tools))
+
+graph.set_entry_point("researcher")
+graph.add_conditional_edges(
+    "researcher",
+    should_continue,
+    {"tools": "tools", "end": END}
+)
+graph.add_edge("tools", "researcher")
+
+app = graph.compile()
+
+# Run
+result = app.invoke({
+    "messages": [],
+    "research_topic": "Latest developments in quantum computing",
+    "findings": [],
+    "iterations": 0
+})
+
+print(result["messages"][-1].content)</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-title">Example 2: Code Review Agent</div>
+                    <pre>class CodeReviewState(TypedDict):
+    code: str
+    issues: list[str]
+    fixes: list[str]
+    approved: bool
+
+def analyze_code(state: CodeReviewState):
+    """Analyze code for issues"""
+    analysis = llm.invoke(f"Review this code:\n{state['code']}")
+    issues = extract_issues(analysis)
+    return {"issues": issues}
+
+def suggest_fixes(state: CodeReviewState):
+    """Suggest fixes for issues"""
+    fixes = []
+    for issue in state["issues"]:
+        fix = llm.invoke(f"Suggest fix for: {issue}")
+        fixes.append(fix)
+    return {"fixes": fixes}
+
+def final_review(state: CodeReviewState):
+    """Final approval check"""
+    if len(state["issues"]) == 0:
+        return {"approved": True}
+    return {"approved": False}
+
+# Build graph
+graph = StateGraph(CodeReviewState)
+graph.add_node("analyze", analyze_code)
+graph.add_node("fix", suggest_fixes)
+graph.add_node("review", final_review)
+
+graph.set_entry_point("analyze")
+graph.add_edge("analyze", "fix")
+graph.add_edge("fix", "review")
+graph.add_edge("review", END)
+
+app = graph.compile()</pre>
+                </div>
+
+                <div class="code-container">
+                    <div class="code-title">Example 3: Customer Support Bot</div>
+                    <pre>from langgraph.checkpoint import MemorySaver
+
+class SupportState(TypedDict):
+    messages: Annotated[list, add]
+    user_id: str
+    issue_type: str
+    resolved: bool
+
+def classify_issue(state: SupportState):
+    """Classify the support issue"""
+    last_msg = state["messages"][-1].content
+    classification = llm.invoke(f"Classify: {last_msg}")
+    return {"issue_type": classification}
+
+def handle_technical(state: SupportState):
+    """Handle technical issues"""
+    response = llm.invoke(f"Technical support for: {state['messages']}")
+    return {"messages": [response]}
+
+def handle_billing(state: SupportState):
+    """Handle billing issues"""
+    response = llm.invoke(f"Billing support for: {state['messages']}")
+    return {"messages": [response]}
+
+def route_issue(state: SupportState):
+    """Route to appropriate handler"""
+    if "technical" in state["issue_type"].lower():
+        return "technical"
+    elif "billing" in state["issue_type"].lower():
+        return "billing"
+    return "general"
+
+# Build graph
+graph = StateGraph(SupportState)
+graph.add_node("classify", classify_issue)
+graph.add_node("technical", handle_technical)
+graph.add_node("billing", handle_billing)
+
+graph.set_entry_point("classify")
+graph.add_conditional_edges(
+    "classify",
+    route_issue,
+    {
+        "technical": "technical",
+        "billing": "billing"
+    }
+)
+graph.add_edge("technical", END)
+graph.add_edge("billing", END)
+
+# Compile with memory
+memory = MemorySaver()
+app = graph.compile(checkpointer=memory)
+
+# Use with conversation history
+config = {"configurable": {"thread_id": "user123"}}
+app.invoke({"messages": [("user", "My login is broken")]}, config)
+app.invoke({"messages": [("user", "I tried resetting password")]}, config)</pre>
+                </div>
+            </div>
+
+            <!-- Production Section -->
+            <div id="production" class="section">
+                <div class="section-title">🏭 Production Best Practices</div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-title">1. Error Handling</div>
+                        <div class="code-container">
+                            <div class="code-title">Robust Error Handling</div>
+                            <pre>def safe_node(state):
+    """Node with error handling"""
+    try:
+        result = risky_operation(state)
+        return {"result": result, "error": None}
+    except Exception as e:
+        logger.error(f"Error in node: {e}")
+        return {
+            "result": None,
+            "error": str(e),
+            "fallback": True
+        }
+
+def error_router(state):
+    """Route based on errors"""
+    if state.get("error"):
+        return "fallback"
+    return "continue"</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">2. Monitoring</div>
+                        <div class="code-container">
+                            <div class="code-title">Logging & Metrics</div>
+                            <pre>import logging
+from datetime import datetime
+
+logger = logging.getLogger(__name__)
+
+def monitored_node(state):
+    """Node with monitoring"""
+    start = datetime.now()
+    
+    logger.info(f"Node started: {state}")
+    
+    try:
+        result = process(state)
+        
+        duration = (datetime.now() - start).total_seconds()
+        logger.info(f"Node completed in {duration}s")
+        
+        return result
+    except Exception as e:
+        logger.error(f"Node failed: {e}")
+        raise</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">3. Rate Limiting</div>
+                        <div class="code-container">
+                            <div class="code-title">Rate Limits</div>
+                            <pre>from ratelimit import limits, sleep_and_retry
+
+@sleep_and_retry
+@limits(calls=10, period=60)  # 10/min
+def rate_limited_node(state):
+    """Node with rate limiting"""
+    return llm.invoke(state["messages"])</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">4. Timeouts</div>
+                        <div class="code-container">
+                            <div class="code-title">Timeout Protection</div>
+                            <pre>from concurrent.futures import ThreadPoolExecutor, TimeoutError
+import signal
+
+def timeout_node(state, timeout=30):
+    """Node with timeout"""
+    with ThreadPoolExecutor() as executor:
+        future = executor.submit(expensive_operation, state)
+        try:
+            result = future.result(timeout=timeout)
+            return {"result": result}
+        except TimeoutError:
+            logger.warning("Operation timed out")
+            return {"result": None, "timeout": True}</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">5. Caching</div>
+                        <div class="code-container">
+                            <div class="code-title">Cache Results</div>
+                            <pre>from functools import lru_cache
+
+@lru_cache(maxsize=1000)
+def cached_embedding(text: str):
+    """Cache expensive embeddings"""
+    return embeddings.embed_query(text)
+
+def node_with_cache(state):
+    """Use cached operations"""
+    emb = cached_embedding(state["text"])
+    return {"embedding": emb}</pre>
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-title">6. Testing</div>
+                        <div class="code-container">
+                            <div class="code-title">Unit Tests</div>
+                            <pre>import pytest
+
+def test_agent_node():
+    """Test individual node"""
+    state = {
+        "messages": [("user", "test")],
+        "iterations": 0
+    }
+    
+    result = agent_node(state)
+    
+    assert "messages" in result
+    assert result["iterations"] == 1
+
+def test_full_graph():
+    """Test complete graph"""
+    result = app.invoke(test_input)
+    
+    assert result["approved"] == True
+    assert len(result["issues"]) == 0</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="success-box">
+                    <div class="box-title">✅ Production Checklist</div>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>✅ Error handling in all nodes</li>
+                        <li>✅ Logging and monitoring</li>
+                        <li>✅ Rate limiting for API calls</li>
+                        <li>✅ Timeouts to prevent hangs</li>
+                        <li>✅ Checkpointing for recovery</li>
+                        <li>✅ Unit tests for nodes</li>
+                        <li>✅ Integration tests for graphs</li>
+                        <li>✅ Performance monitoring</li>
+                        <li>✅ Cost tracking (API calls)</li>
+                        <li>✅ Documentation</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <div class="box-title">⚠️ Common Pitfalls</div>
+                    <ul style="margin-left: 20px; line-height: 1.8;">
+                        <li>❌ No max iterations (infinite loops)</li>
+                        <li>❌ No error handling (crashes)</li>
+                        <li>❌ No timeouts (hangs forever)</li>
+                        <li>❌ Not using checkpoints (can't resume)</li>
+                        <li>❌ No logging (can't debug)</li>
+                        <li>❌ Unbounded state growth (memory leak)</li>
+                        <li>❌ No rate limiting (API quota exceeded)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
